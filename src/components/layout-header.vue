@@ -22,7 +22,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人信息</el-dropdown-item>
             <el-dropdown-item>git地址</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item @click.native="clickHandle">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-row>
@@ -32,7 +32,30 @@
 
 <script>
 export default {
-  name: 'layout-header'
+  name: 'layout-header',
+  methods: {
+    clickHandle () {
+      // 退出提示
+      this.$confirm('请确认是否退出', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+        // 清除token
+        window.localStorage.removeItem('toutiao-token')
+        this.$router.push('/login')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        })
+      })
+    }
+  }
 }
 </script>
 

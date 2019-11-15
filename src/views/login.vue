@@ -79,7 +79,7 @@ export default {
             data: this.loginForm
           }).then(res => {
             window.localStorage.setItem('toutiao-token', res.data.data.token)
-            this.$router.push('/home')
+            this.$router.push('/index')
           }).catch(() => {
             this.$message({
               message: '手机号或者验证码错误',
