@@ -7,17 +7,17 @@
       <el-form ref='filterForm' :model="filterForm" >
         <el-form-item label="文章状态">
           <el-radio-group v-model="filterForm.status">
-            <el-radio-button value='全部' label="全部"></el-radio-button>
-            <el-radio-button value='草稿' label="草稿"></el-radio-button>
-            <el-radio-button value='待审核' label="待审核"></el-radio-button>
-            <el-radio-button value='审核通过' label="审核通过"></el-radio-button>
-            <el-radio-button value='审核失败' label="审核失败"></el-radio-button>
+            <el-radio-button :label="null">全部</el-radio-button>
+            <el-radio-button label="0">草稿</el-radio-button>
+            <el-radio-button label="1">待审核</el-radio-button>
+            <el-radio-button label="2">审核通过</el-radio-button>
+            <el-radio-button label="3">审核失败</el-radio-button>
+            <el-radio-button label="4">已删除</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表" >
           <el-select placeholder="请选择" v-model="filterForm.channel_id">
-            <el-option value='0' label="区域一"></el-option>
-            <el-option value='1' label="区域二"></el-option>
+            <el-option v-for="channel in channels" :key="channel.id" :value="channel.id" :label="channel.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间选择">
@@ -28,16 +28,17 @@
             range-seperator="----"
             start-placeholde="开始日期"
             end-placeholde="结束日期"
+            value-format="yyyy-MM-dd"
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
+          <el-button type="primary" @click='filterArticles'>查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card>
       <div slot="header">
-        <span>共找到0条符合条件的内容</span>
+        <span>共找到{{ total_count }}条符合条件的内容</span>
       </div>
       <!--
         el-table 表格组件
@@ -58,6 +59,7 @@
         :data="tableData"
         stripe
         style="width: 100%"
+        v-loading="loading"
       >
         <el-table-column
           prop="avatar"
@@ -101,19 +103,32 @@
           <el-button type="danger" size="mini">删除</el-button>
         </el-table-column>
       </el-table>
+      <!-- 分页器 -->
+      <el-pagination
+        style="text-align: center;margin: 50px"
+        background
+        layout="prev, pager, next"
+        :total="total_count"
+        :current-page="filterForm.page"
+        @current-change="pageChange"
+        :disabled="loading"
+      ></el-pagination>
     </el-card>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'article-list',
   data () {
     return {
       filterForm: {
-        status: '',
-        channel_id: '',
-        begin_pubdate: '',
-        end_pubdate: ''
+        status: null,
+        channel_id: null,
+        begin_pubdate: null,
+        end_pubdate: null,
+        page: 1,
+        per_page: 10
       },
       rangeDate: '',
       tableData: [],
@@ -123,26 +138,69 @@ export default {
         { type: 'success', label: '审核通过' },
         { type: 'danger', label: '审核失败' },
         { type: 'info', label: '已删除' }
-      ]
+      ],
+      total_count: 0,
+      channels: [],
+      loading: true
     }
   },
   methods: {
     loadArticles () {
+      // 显示 加载中
+      this.loading = true
       this.$axios({
         method: 'get',
         url: '/articles',
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('toutiao-token')}`
-        }
+        // headers: {
+        //   Authorization: `Bearer ${window.localStorage.getItem('toutiao-token')}`
+        // },
+        params: this.filterForm
       }).then(res => {
+        this.total_count = res.data.data.total_count
         this.tableData = res.data.data.results
       }).catch(err => {
         console.log(err, '请求出错了')
+      }).finally(() => {
+        // 隐藏加载中
+        this.loading = false
       })
+    },
+
+    loadChannels () {
+      this.$axios({
+        method: 'get',
+        url: '/channels'
+      }).then(res => {
+        this.channels = res.data.data.channels
+      }).catch(err => {
+        console.log(err, '频道列表请求出错了')
+      })
+    },
+
+    pageChange (currentPage) {
+      this.filterForm.page = currentPage
+      this.loadArticles()
+    },
+
+    // 过滤文章
+    filterArticles () {
+      // 把filterForm中的page初始化为 1，这样筛选结果默认显示第一页
+      this.filterForm.page = 1
+      this.loadArticles()
     }
   },
+
+  watch: {
+    // 监听日期的改变，然后改变过滤对象中的开始与结束日期
+    rangeDate () {
+      this.filterForm.begin_pubdate = this.rangeDate && this.rangeDate[0]
+      this.filterForm.end_pubdate = this.rangeDate && this.rangeDate[1]
+    }
+  },
+
   created () {
     this.loadArticles()
+    this.loadChannels()
   }
 }
 </script>

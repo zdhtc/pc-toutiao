@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-aside
-      style="background-color: #353b4e;height: 100vh;width: 220px;overflow: hidden"
+      class="aside" style="width: 220px;"
     >
       <div class="logo">
         <img src="@/assets/imgs/logo_admin.png" alt />
@@ -39,6 +39,14 @@ export default {}
 </script>
 
 <style scoped lang='less'>
+.aside{
+  background-color: #353b4e;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
 .logo {
   padding: 20px 0;
   text-align: center;
