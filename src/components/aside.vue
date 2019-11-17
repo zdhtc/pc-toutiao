@@ -12,6 +12,8 @@
         active-text-color="#ffd04b"
         style="width: 221px"
         router
+        :default-active="active"
+        @select="selectHandle"
       >
         <el-menu-item index="/index">首页</el-menu-item>
         <el-submenu index="2">
@@ -35,7 +37,19 @@
 </template>
 
 <script>
-export default {}
+export default {
+  name: 'layout-aside',
+  data () {
+    return {
+      active: '/index'
+    }
+  },
+  methods: {
+    selectHandle (index) {
+      this.active = index
+    }
+  }
+}
 </script>
 
 <style scoped lang='less'>

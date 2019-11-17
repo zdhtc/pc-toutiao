@@ -45,6 +45,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   NProgress.start()
   console.log('router begin')
+
   if (to.path === '/login') {
     return next()
   }

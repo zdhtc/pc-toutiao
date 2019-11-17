@@ -99,8 +99,10 @@
           prop=""
           label="操作"
         >
-          <el-button type="primary" size="mini">编辑</el-button>
-          <el-button type="danger" size="mini">删除</el-button>
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini">编辑</el-button>
+            <el-button type="danger" size="mini" @click="onDelete(scope.row.id)">删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <!-- 分页器 -->
@@ -187,6 +189,29 @@ export default {
       // 把filterForm中的page初始化为 1，这样筛选结果默认显示第一页
       this.filterForm.page = 1
       this.loadArticles()
+    },
+
+    // 删除文章
+    onDelete (articleId) {
+      this.$confirm('你确认要删除这篇文章吗?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${articleId}`
+        }).then(res => {
+          this.loadArticles()
+        }).catch(err => {
+          console.log(err, '删除文章失败')
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   },
 

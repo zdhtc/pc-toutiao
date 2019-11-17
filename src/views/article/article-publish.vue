@@ -109,9 +109,18 @@ export default {
   created () {
     this.loadChannels()
   }
+  // mounted () {
+  //   // console.log(this.channels)
+  //   console.log(this.aside)
+  // }
 }
 </script>
 
-<style>
+<style  lang='less'>
+.quill-editor{
+  .ql-container{
+    height: 300px;
+  }
+}
 
 </style>

@@ -40,7 +40,7 @@ axios.defaults.transformResponse = [
     try {
       return JSONbig.parse(data)
     } catch (err) {
-      console.log(err)
+      console.log(err, 'jsonbig parse error')
       return {}
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <el-container style="padding-left: 220px">
-    <layout-aside></layout-aside>
+    <layout-aside ref="as" ></layout-aside>
     <el-container class="container">
       <el-header class="header">
         <layout-header></layout-header>
@@ -20,6 +20,16 @@ export default {
   components: {
     layoutHeader,
     layoutAside
+  },
+  beforeRouteUpdate (to, from, next) {
+    // console.log(this.$refs.as.$el.querySelector('#menu'))
+    if (from.path === to.path) {
+      return next(new Error())
+    }
+    if (this.$refs.as.active !== to.path) {
+      this.$refs.as.active = to.path
+    }
+    next()
   }
 }
 </script>
