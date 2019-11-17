@@ -4,6 +4,7 @@ import login from '../views/login'
 import index from '../views/home/index.vue'
 import home from '@/views/home/home.vue'
 import article from '@/views/article/article-list'
+import articlePublish from '@/views/article/article-publish'
 import NProgress from 'nprogress'
 
 Vue.use(VueRouter)
@@ -28,6 +29,10 @@ const routes = [
       {
         path: 'article',
         component: article
+      },
+      {
+        path: 'publish',
+        component: articlePublish
       }
     ]
   }

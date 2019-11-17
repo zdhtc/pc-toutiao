@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.less'
 import axios from 'axios'
 import 'nprogress/nprogress.css'
+import JSONbig from 'json-bigint'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -30,6 +31,20 @@ axios.interceptors.response.use(response => {
 }, err => {
   return Promise.reject(err)
 })
+
+// 改变axios 响应数据的默认转化方式
+axios.defaults.transformResponse = [
+  function (data, headers) {
+    // axios默认使用 JSON.parse(data)
+    // 我们这里手动配置使用 JSONbig.parse()
+    try {
+      return JSONbig.parse(data)
+    } catch (err) {
+      console.log(err)
+      return {}
+    }
+  }
+]
 
 new Vue({
   router,
