@@ -9,6 +9,7 @@
     @input="$emit('input', $event)"
     placeholder="请选择类别"
   >
+    <el-option v-if="$route.path === '/index/article'" :value="null" >所有频道</el-option>
     <el-option
       v-for="channel in channels"
       :key="channel.id"

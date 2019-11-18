@@ -33,6 +33,10 @@ const routes = [
       {
         path: 'publish',
         component: articlePublish
+      },
+      {
+        path: 'publish/:articleId',
+        component: articlePublish
       }
     ]
   }

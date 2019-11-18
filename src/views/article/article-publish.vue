@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <div slot="header">
-      <span>发布文章</span>
+      <span>{{ $route.params.articleId ? '编辑文章' : '发布文章' }}</span>
     </div>
     <el-form ref="form" :model="article" label-width="80px" :rules="rules" status-icon>
       <el-form-item label="标题" prop="title">
@@ -26,7 +26,7 @@
           </el-radio-group>
         </el-form-item> -->
       <el-form-item>
-        <el-button type="primary" @click="onSubmit(false)">发表</el-button>
+        <el-button type="primary" @click="onSubmit(false)">{{ $route.params.articleId ? '编辑' : '发布' }}</el-button>
         <el-button type="" @click="onSubmit(true)">草稿</el-button>
       </el-form-item>
     </el-form>
@@ -67,8 +67,15 @@ export default {
   },
 
   methods: {
-
     onSubmit (draft) {
+      if (this.$route.params.articleId) {
+        this.updateArticle(draft)
+      } else {
+        this.addArticle(draft)
+      }
+    },
+
+    addArticle (draft) {
       this.$axios({
         method: 'post',
         url: '/articles',
@@ -85,17 +92,49 @@ export default {
       }).catch(err => {
         console.log(err + '发表文章失败')
       })
+    },
+
+    updateArticle (draft) {
+      this.$axios({
+        method: 'PUT',
+        url: `articles/${this.$route.params.articleId}`,
+        params: {
+          draft
+        },
+        data: this.article
+      }).then(res => {
+        if (res.data.message === 'OK') {
+          this.$message({
+            type: 'success',
+            message: '更新成功'
+          })
+          this.$router.push('/index/article')
+        }
+      }).catch(() => {
+        this.$message.error('更新失败')
+      })
+    },
+
+    loadArticle (articleId) {
+      this.$axios({
+        method: 'GET',
+        url: `/articles/${this.$route.params.articleId}`
+      }).then(res => {
+        this.article = res.data.data
+      }).catch(err => {
+        console.log(err, '获取文章失败')
+      })
     }
   },
 
   components: {
     quillEditor,
     channelList
+  },
+
+  created () {
+    this.$route.params.articleId && this.loadArticle()
   }
-  // mounted () {
-  //   // console.log(this.channels)
-  //   console.log(this.aside)
-  // }
 }
 </script>
 

@@ -6,7 +6,11 @@
         <layout-header></layout-header>
       </el-header>
       <el-main>
-        <router-view></router-view>
+        <!--
+          不同的路由跳转但是复用同一个组件时，vue内部不会重新加载，会复用这个组件，此时可以类比v-for
+          给每个组件加一个 key
+        -->
+        <router-view :key="$route.path"></router-view>
       </el-main>
     </el-container>
   </el-container>
