@@ -16,9 +16,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表" >
-          <el-select placeholder="请选择" v-model="filterForm.channel_id">
-            <el-option v-for="channel in channels" :key="channel.id" :value="channel.id" :label="channel.name"></el-option>
-          </el-select>
+          <channel-list v-model="filterForm.channel_id"></channel-list>
         </el-form-item>
         <el-form-item label="时间选择">
           <el-date-picker
@@ -120,6 +118,9 @@
 </template>
 
 <script>
+// import channel component
+import channelList from '@/views/article/article-channel'
+
 export default {
   name: 'article-list',
   data () {
@@ -142,7 +143,6 @@ export default {
         { type: 'info', label: '已删除' }
       ],
       total_count: 0,
-      channels: [],
       loading: true
     }
   },
@@ -165,17 +165,6 @@ export default {
       }).finally(() => {
         // 隐藏加载中
         this.loading = false
-      })
-    },
-
-    loadChannels () {
-      this.$axios({
-        method: 'get',
-        url: '/channels'
-      }).then(res => {
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '频道列表请求出错了')
       })
     },
 
@@ -223,9 +212,12 @@ export default {
     }
   },
 
+  components: {
+    channelList
+  },
+
   created () {
     this.loadArticles()
-    this.loadChannels()
   }
 }
 </script>

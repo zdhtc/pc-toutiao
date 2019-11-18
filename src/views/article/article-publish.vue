@@ -3,8 +3,8 @@
     <div slot="header">
       <span>发布文章</span>
     </div>
-    <el-form ref="form" :model="article" label-width="80px">
-      <el-form-item label="标题">
+    <el-form ref="form" :model="article" label-width="80px" :rules="rules" status-icon>
+      <el-form-item label="标题" prop="title">
         <el-input v-model="article.title"></el-input>
       </el-form-item>
       <el-form-item label="内容">
@@ -17,18 +17,7 @@
         </quill-editor>
       </el-form-item>
       <el-form-item label="频道">
-        <el-select
-          v-model="article.channel_id"
-          placeholder="请选择类别"
-        >
-          <el-option
-            v-for="channel in channels"
-            :key="channel.id"
-            :label="channel.name"
-            :value="channel.id"
-          >
-          </el-option>
-        </el-select>
+        <channel-list v-model="article.channel_id"></channel-list>
       </el-form-item>
       <!-- <el-form-item label="封面">
           <el-radio-group v-model="form.resource">
@@ -51,6 +40,8 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 // import core component
 import { quillEditor } from 'vue-quill-editor'
+// import channel component
+import channelList from '@/views/article/article-channel'
 
 export default {
   name: 'publish',
@@ -65,22 +56,17 @@ export default {
           images: [] // 图片，无图就是空数组即可
         }
       },
-      channels: [],
+      rules: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+          { pattern: /^.{5,10}$/, message: '请输入5-10个字符', trigger: 'blur' }
+        ]
+      },
       editorOption: {}
     }
   },
 
   methods: {
-    loadChannels () {
-      this.$axios({
-        method: 'get',
-        url: '/channels'
-      }).then(res => {
-        this.channels = res.data.data.channels
-      }).catch(err => {
-        console.log(err, '频道列表请求出错了')
-      })
-    },
 
     onSubmit (draft) {
       this.$axios({
@@ -103,11 +89,8 @@ export default {
   },
 
   components: {
-    quillEditor
-  },
-
-  created () {
-    this.loadChannels()
+    quillEditor,
+    channelList
   }
   // mounted () {
   //   // console.log(this.channels)

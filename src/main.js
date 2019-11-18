@@ -18,9 +18,9 @@ axios.interceptors.request.use(config => {
   // 统一设置token
   // config 就是最后要发给后端的那个配置对象
   const token = window.localStorage.getItem('toutiao-token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+
+  token && (config.headers.Authorization = `Bearer ${token}`)
+
   return config
 }, err => {
   return Promise.reject(err)
