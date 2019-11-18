@@ -5,6 +5,7 @@ import index from '../views/home/index.vue'
 import home from '@/views/home/home.vue'
 import article from '@/views/article/article-list'
 import articlePublish from '@/views/article/article-publish'
+import comment from '@/views/article/comment.vue'
 import NProgress from 'nprogress'
 
 Vue.use(VueRouter)
@@ -37,6 +38,10 @@ const routes = [
       {
         path: 'publish/:articleId',
         component: articlePublish
+      },
+      {
+        path: 'comment',
+        component: comment
       }
     ]
   }
@@ -57,6 +62,7 @@ router.beforeEach((to, from, next) => {
     NProgress.done()
     return next('/login')
   }
+
   next()
 })
 

@@ -20,7 +20,7 @@
           <template slot="title">内容管理</template>
           <el-menu-item index="/index/publish">发布文章</el-menu-item>
           <el-menu-item index="/index/article">内容列表</el-menu-item>
-          <el-menu-item index="2-3">评论列表</el-menu-item>
+          <el-menu-item index="/index/comment">评论列表</el-menu-item>
           <el-menu-item index="2-4">素材管理</el-menu-item>
         </el-submenu>
         <el-submenu index="4">

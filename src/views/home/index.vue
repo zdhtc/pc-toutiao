@@ -34,6 +34,13 @@ export default {
       this.$refs.as.active = to.path
     }
     next()
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (to.path !== vm.$refs.as.active) {
+        vm.$refs.as.active = to.path
+      }
+    })
   }
 }
 </script>
