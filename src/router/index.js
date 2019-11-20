@@ -5,7 +5,10 @@ import index from '../views/home/index.vue'
 import home from '@/views/home/home.vue'
 import article from '@/views/article/article-list'
 import articlePublish from '@/views/article/article-publish'
-import comment from '@/views/article/comment.vue'
+import comment from '@/views/article/comment'
+import commentDetail from '@/views/article/comment-detail'
+import material from '@/views/article/material'
+import account from '@/views/account/account.vue'
 import NProgress from 'nprogress'
 
 Vue.use(VueRouter)
@@ -42,6 +45,19 @@ const routes = [
       {
         path: 'comment',
         component: comment
+      },
+      {
+        path: 'comment/:commentId',
+        component: commentDetail,
+        props: true // 把commentId当作属性传给子路由
+      },
+      {
+        path: 'material',
+        component: material
+      },
+      {
+        path: '/account',
+        component: account
       }
     ]
   }

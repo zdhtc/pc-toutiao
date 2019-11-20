@@ -7,6 +7,7 @@ import './styles/index.less'
 import axios from 'axios'
 import 'nprogress/nprogress.css'
 import JSONbig from 'json-bigint'
+import moment from 'moment'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -45,6 +46,11 @@ axios.defaults.transformResponse = [
     }
   }
 ]
+
+// 注册全局过滤器
+Vue.filter('dateFormat', (date, format = 'YYYY-MM-DD') => {
+  return moment(date).format(format)
+})
 
 new Vue({
   router,
