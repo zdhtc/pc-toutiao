@@ -7,7 +7,7 @@
           class="avatar-uploader"
           action="http://ttapi.research.itcast.cn/mp/v1_0/user/photo"
           :show-file-list="false"
-          :on-progress="avatarUpload"
+          :http-request="avatarUpload"
         >
 
           <img :src="user.photo" alt="" v-if="user.photo">
@@ -25,7 +25,7 @@
         <el-input v-model="user.email"></el-input>
       </el-form-item>
       <el-form-item label="手机号">
-        <el-input v-model="user.mobile"></el-input>
+        <el-input v-model="user.mobile" disabled></el-input>
       </el-form-item>
       <el-form-item >
         <el-button type="primary" @click="onSubmit">保存修改</el-button>
@@ -36,6 +36,7 @@
 
 <script>
 export default {
+  name: 'account',
   data () {
     return {
       user: {
@@ -52,7 +53,25 @@ export default {
   },
   methods: {
     onSubmit () {
-      console.log('提交了')
+      const { name, intro, email } = this.user
+      this.$axios({
+        method: 'PATCH',
+        url: '/user/profile',
+        data: {
+          name,
+          intro,
+          email
+        }
+      }).then(res => {
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.$message.error('修改失败')
+      }).finally(() => {
+        this.loadUserProfile()
+      })
     },
 
     loadUserProfile () {
@@ -66,22 +85,18 @@ export default {
       })
     },
 
-    avatarUpload (event, file) {
-      // 取消组件的默认上传
-      this.$refs.avatar.abort()
+    avatarUpload (file) {
+      // // 取消组件的默认上传
+      // this.$refs.avatar.abort()
+      const avatar = new FormData()
+      avatar.append('photo', file.file)
       // 手动上传图片
       this.$axios({
         method: 'PATCH',
         url: '/user/photo',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        data: {
-          photo: file.raw
-        }
+        data: avatar
       }).then(res => {
-        // this.$refs.avatar.$el.querySelector('img').src
-        console.log(res)
+        this.user.photo = res.data.data.photo
       }).catch(err => {
         console.log('头像上传失败', err)
       })
