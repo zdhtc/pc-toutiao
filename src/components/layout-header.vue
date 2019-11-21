@@ -12,8 +12,8 @@
           style="width: 50%;"
           size="small"
         ></el-input>
-        <el-badge>消息</el-badge>
-        <el-avatar src="../../assets/imgs/avatar.jpg" style="cursor:pointer"></el-avatar>
+        <el-badge>{{ user.name }}</el-badge>
+        <el-avatar :src="user.photo" style="cursor:pointer"></el-avatar>
         <el-dropdown trigger="click" placement="bottom">
           <span style="cursor: pointer;">
             下拉菜单
@@ -31,9 +31,39 @@
 </template>
 
 <script>
+import eventBus from '@/utils/event-bus.js'
+
 export default {
   name: 'layout-header',
+  data () {
+    return {
+      user: {
+        name: '',
+        photo: ''
+      }
+    }
+  },
+  created () {
+    this.loadUserProfile()
+    // 注册公共事件
+    eventBus.$on('userUpdate', (user) => {
+      // this.user = user
+      this.user.name = user.name
+      this.user.photo = user.photo
+    })
+  },
   methods: {
+    loadUserProfile () {
+      this.$axios({
+        method: 'GET',
+        url: '/user/profile'
+      }).then(res => {
+        this.user = res.data.data
+      }).catch(() => {
+        this.$message.error('获取用户数据失败')
+      })
+    },
+
     clickHandle () {
       // 退出提示
       this.$confirm('请确认是否退出', '提示', {

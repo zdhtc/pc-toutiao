@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import eventBus from '@/utils/event-bus.js'
+
 export default {
   name: 'account',
   data () {
@@ -63,6 +65,8 @@ export default {
           email
         }
       }).then(res => {
+        // 同步更新header中的用户数据
+        eventBus.$emit('userUpdate', this.user)
         this.$message({
           type: 'success',
           message: '修改成功'
@@ -97,6 +101,8 @@ export default {
         data: avatar
       }).then(res => {
         this.user.photo = res.data.data.photo
+        // 同步更新header中的用户数据
+        eventBus.$emit('userUpdate', this.user)
       }).catch(err => {
         console.log('头像上传失败', err)
       })
