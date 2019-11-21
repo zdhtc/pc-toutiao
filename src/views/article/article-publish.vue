@@ -19,12 +19,17 @@
       <el-form-item label="频道">
         <channel-list v-model="article.channel_id"></channel-list>
       </el-form-item>
-      <!-- <el-form-item label="封面">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="线上品牌商赞助"></el-radio>
-            <el-radio label="线下场地免费"></el-radio>
+      <el-form-item label="封面">
+          <el-radio-group v-model="article.cover.type" @change="onChange">
+            <el-radio :label="1">单图</el-radio>
+            <el-radio :label="3">三图</el-radio>
+            <el-radio :label="0">无图</el-radio>
+            <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
-        </el-form-item> -->
+          <div v-if="article.cover.type > 0">
+            <avater-upload ref="avatarUpload" v-for="item in article.cover.type" :key="item" v-model="article.cover.images[item - 1]"></avater-upload>
+          </div>
+        </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(false)">{{ $route.params.articleId ? '编辑' : '发布' }}</el-button>
         <el-button type="" @click="onSubmit(true)">草稿</el-button>
@@ -42,6 +47,8 @@ import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 // import channel component
 import channelList from '@/views/article/article-channel'
+// import avater upload
+import avaterUpload from './component/upload-avatar'
 
 export default {
   name: 'publish',
@@ -124,12 +131,18 @@ export default {
       }).catch(err => {
         console.log(err, '获取文章失败')
       })
+    },
+
+    onChange () {
+      // this.article.cover.images.length = 0
+      this.article.cover.images = []
     }
   },
 
   components: {
     quillEditor,
-    channelList
+    channelList,
+    avaterUpload
   },
 
   created () {
